@@ -16,4 +16,4 @@ This query helps to manage orders, products, and customers using SQL with insigh
 # Task 4: Online Store Order Management System (Using PostgreSQL)
 OLAP-based SQL project to analyze rental trends by genre, customer, and date with slice, dice, and rollup
 
-# Task-wise output screenshots have been organized under the 'output' folder
+# Task-wise output screenshots have been organized under the 'Output Screenshots' folder
