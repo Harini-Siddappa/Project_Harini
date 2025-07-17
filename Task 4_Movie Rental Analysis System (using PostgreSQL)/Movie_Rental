@@ -1,0 +1,62 @@
+DROP TABLE IF EXISTS rental_data;
+
+CREATE TABLE rental_data (
+    MOVIE_ID INT,
+    CUSTOMER_ID INT,
+    GENRE VARCHAR(50),
+    RENTAL_DATE DATE,
+    RETURN_DATE DATE,
+    RENTAL_FEE NUMERIC(6,2)
+);
+
+INSERT INTO rental_data VALUES
+(201, 1, 'Action',  '2024-01-05', '2024-01-07', 155.00),
+(202, 2, 'Drama',   '2024-01-15', '2024-01-17', 127.00),
+(203, 3, 'Comedy',  '2024-02-01', '2024-02-03', 112.00),
+(204, 4, 'Action',  '2024-02-10', '2024-02-12', 138.00),
+(205, 5, 'Drama',   '2024-02-20', '2024-02-22', 149.00),
+(206, 6, 'Action',  '2024-03-01', '2024-03-03', 119.00),
+(207, 1, 'Horror',  '2024-03-10', '2024-03-12', 108.00),
+(208, 2, 'Comedy',  '2024-03-20', '2024-03-22', 102.00),
+(209, 3, 'Drama',   '2024-04-01', '2024-04-03', 135.00),
+(210, 4, 'Action',  '2024-04-10', '2024-04-12', 143.00),
+(211, 5, 'Drama',   '2024-04-20', '2024-04-22', 101.00),
+(212, 6, 'Comedy',  '2024-05-01', '2024-05-02', 97.00),
+(213, 1, 'Action',  '2024-05-10', '2024-05-11', 162.00),
+(214, 2, 'Drama',   '2024-05-15', '2024-05-16', 118.00),
+(215, 3, 'Action',  '2025-05-20', '2025-05-21', 146.00);
+
+SELECT GENRE,MOVIE_ID,
+COUNT(DISTINCT (MOVIE_ID, CUSTOMER_ID, RENTAL_DATE)) AS unique_rentals,
+SUM(RENTAL_FEE) AS total_rental_fee
+FROM rental_data
+GROUP BY GENRE, MOVIE_ID
+ORDER BY GENRE, MOVIE_ID;
+
+SELECT
+CASE
+WHEN GROUPING(GENRE) = 1 THEN 'Total'
+ELSE GENRE
+END AS genre,
+SUM(RENTAL_FEE) AS total_rental_fee
+FROM rental_data
+GROUP BY ROLLUP(GENRE)
+ORDER BY GROUPING(GENRE),GENRE;
+
+SELECT
+COALESCE(GENRE, 'Total Genre') AS genre_type,
+COALESCE(RENTAL_DATE::text, 'All Rent Dates') AS rent_date,
+COALESCE(CUSTOMER_ID::text, 'All Cust') AS cust_id,
+SUM(RENTAL_FEE) AS total_rental_fee
+FROM rental_data
+GROUP BY CUBE(GENRE, RENTAL_DATE, CUSTOMER_ID)
+ORDER BY GROUPING(GENRE),GENRE;
+
+SELECT *
+FROM rental_data
+WHERE GENRE = 'Action';
+
+SELECT *
+FROM rental_data
+WHERE GENRE IN ('Action', 'Drama')
+AND RENTAL_DATE >= CURRENT_DATE - INTERVAL '3 months';
